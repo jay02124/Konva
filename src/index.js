@@ -8,6 +8,7 @@ const templateRoutes = require('./routes/template.routes');
 const patternRoutes = require('./routes/pattern.routes');
 const shapeRoutes = require('./routes/shape.routes');
 const uploadRoutes = require('./routes/upload.routes');
+const authRoutes = require('./routes/Auth.routes');
 const connectDB = require('./config/database');
 
 dotenv.config();
@@ -30,6 +31,7 @@ app.use('/api/templates', templateRoutes);
 app.use('/api/patterns', patternRoutes);
 app.use('/api/shapes', shapeRoutes);
 app.use('/api/uploads', uploadRoutes);
+app.use('/api/auth', authRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
