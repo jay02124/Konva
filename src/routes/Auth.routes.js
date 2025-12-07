@@ -2,7 +2,13 @@ const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const User = require('./user');
+const User = require('../models/User.model');
+
+// Debug: Ensure dependencies are loaded
+if (!bcrypt || !jwt || !User) {
+    console.error('Dependency missing:', { bcrypt: !!bcrypt, jwt: !!jwt, User: !!User });
+    throw new Error('One or more dependencies (bcrypt, jwt, User) failed to load');
+}
 
 // Register route
 router.post('/register', async (req, res) => {
@@ -24,12 +30,13 @@ router.post('/register', async (req, res) => {
             username,
             email,
             password: hashedPassword,
-            role: role || 'student' // Default to student if no role provided
+            role: role || 'student'
         });
 
         await user.save();
         res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
+        console.error('Register error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
@@ -59,7 +66,7 @@ router.post('/login', async (req, res) => {
         // Generate JWT
         const token = jwt.sign(
             { userId: user._id, role: user.role },
-            process.env.JWT_SECRET || 'your_jwt_secret', // Use environment variable in production
+            process.env.JWT_SECRET || 'your_jwt_secret',
             { expiresIn: '1h' }
         );
 
@@ -73,6 +80,7 @@ router.post('/login', async (req, res) => {
             }
         });
     } catch (error) {
+        console.error('Login error:', error);
         res.status(500).json({ message: 'Server error', error: error.message });
     }
 });
